@@ -8,6 +8,7 @@ import java.time.LocalDateTime;
 public record TodoResponse(
          Long id ,
          String title,
+         Long userId,
          String description,
          Priority priority,
          Status status,
