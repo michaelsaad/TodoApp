@@ -87,7 +87,7 @@ public class TodoServiceImpl implements TodoService {
     }
 
     @Override
-    public void updateTodo(long id , TodoRequestForService todoDto) {
+    public void updateTodo(Long id , TodoRequestForService todoDto) {
 
         Optional<Todo> todoOptional = todoRepository.findById(id);
         if (todoOptional.isPresent()) {
@@ -104,7 +104,7 @@ public class TodoServiceImpl implements TodoService {
                 Todo updatedTodo = new Todo();
                 updatedTodo.setId(todo.getId());
                 updatedTodo.setTitle(todoDto.title());
-                updatedTodo.setUserId(todo.getUserId());
+                updatedTodo.setUserId(todoDto.userId());
 
                 // Associate Todo with TodoDetails
                 updatedTodo.setTodoDetails(todoDetails);

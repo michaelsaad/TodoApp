@@ -15,7 +15,7 @@ import java.util.Map;
 public class JwtService {
 
 
-    private final String secret_key = "mysecretkey";
+    private final String secret_key = "BigProblemMickey";
 
     private final long accessTokenValidity = 30*60*1000;  //valid till 30 minutes
 

@@ -33,20 +33,7 @@ public class JwtUtils {
         return response.getStatusCode().is2xxSuccessful();
     }
 
-    public boolean isTokenNotExpired(String token) {
-        HttpHeaders headers = new HttpHeaders();
-        headers.set("Authorization", token);
 
-        HttpEntity<String> entity = new HttpEntity<>(headers);
-        ResponseEntity<String> response = restTemplate.exchange(
-                authServiceUrl + "/expiration-check", // Endpoint in authentication service
-                HttpMethod.GET,
-                entity,
-                String.class
-        );
-
-        return response.getStatusCode().is2xxSuccessful();
-    }
 
     public Long extractUserIdFromToken(String token) {
         try {

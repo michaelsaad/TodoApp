@@ -26,10 +26,28 @@ public class TodoController {
         this.todoService = todoService;
         this.jwtUtils = jwtUtils;
     }
+
+    @PostMapping("/test")
+    public ResponseEntity<Void> saveTodoTest(@RequestBody TodoRequest todoDto
+                                         ) {
+        Long extractedUserId = 20L;
+
+        TodoRequestForService todoRequestForService = new TodoRequestForService(todoDto.title(),
+                extractedUserId, todoDto.description(), todoDto.priority(), todoDto.status());
+
+                todoService.saveTodo(todoRequestForService);
+                return ResponseEntity.ok().build();
+            }
+
+    @GetMapping("/test")
+    public ResponseEntity<List<Todo>> getAllTodosTest() {
+        List<Todo> todos = todoService.getAllTodos();
+        return ResponseEntity.ok(todos);
+    }
     @PostMapping
     public ResponseEntity<Void> saveTodo(@RequestBody TodoRequest todoDto,
                                          @RequestHeader("Authorization") String token) {
-        if (jwtUtils.isTokenValid(token)&& jwtUtils.isTokenNotExpired(token)) {
+        if (jwtUtils.isTokenValid(token)) {
             Long extractedUserId = jwtUtils.extractUserIdFromToken(token);
             if (extractedUserId != null ) {
                 TodoRequestForService todoRequestForService = new TodoRequestForService(
@@ -52,7 +70,7 @@ public class TodoController {
     @GetMapping
     public ResponseEntity<List<Todo>> getAllTodos(@RequestHeader("Authorization") String token) {
 
-        if (jwtUtils.isTokenValid(token)&& jwtUtils.isTokenNotExpired(token)) {
+        if (jwtUtils.isTokenValid(token)) {
             List<Todo> todos = todoService.getAllTodos();
             return ResponseEntity.ok(todos);
         } else {
@@ -63,7 +81,7 @@ public class TodoController {
     @GetMapping("/user")
     public ResponseEntity<List<Todo>> getAllTodosForUserId(
             @RequestHeader("Authorization") String token) {
-        if (jwtUtils.isTokenValid(token)&& jwtUtils.isTokenNotExpired(token)) {
+        if (jwtUtils.isTokenValid(token)) {
             Long extractedUserId = jwtUtils.extractUserIdFromToken(token);
             if (extractedUserId != null ) {
                 List<Todo> todos = todoService.getAllTodosByUserId(extractedUserId);
@@ -80,7 +98,7 @@ public class TodoController {
     public ResponseEntity<List<TodoResponse>> getAllTodosWithDetailsForUser(
             @RequestHeader("Authorization") String token) {
 
-        if (jwtUtils.isTokenValid(token)&& jwtUtils.isTokenNotExpired(token)) {
+        if (jwtUtils.isTokenValid(token)) {
             Long extractedUserId = jwtUtils.extractUserIdFromToken(token);
             if (extractedUserId != null ) {
                 List<TodoResponse> todoResponses = (todoService
@@ -98,7 +116,7 @@ public class TodoController {
     @GetMapping("/user/{userId}")
     public ResponseEntity<List<Todo>> getAllTodosByUserId(@PathVariable Long userId,
                                                           @RequestHeader("Authorization") String token) {
-        if (jwtUtils.isTokenValid(token)&& jwtUtils.isTokenNotExpired(token)) {
+        if (jwtUtils.isTokenValid(token)) {
 
                 List<Todo> todos = todoService.getAllTodosByUserId(userId);
                 return ResponseEntity.ok(todos);
@@ -111,7 +129,7 @@ public class TodoController {
     @GetMapping("/user/details/{userId}/")
     public ResponseEntity<List<TodoResponse>> getAllTodosWithDetailsByUserId(
             @PathVariable Long userId ,@RequestHeader("Authorization") String token) {
-        if (jwtUtils.isTokenValid(token)&& jwtUtils.isTokenNotExpired(token)) {
+        if (jwtUtils.isTokenValid(token)) {
 
             List<TodoResponse> todoResponses = (todoService
                     .getAllTodosWithDetailsByUserId(userId));
@@ -125,7 +143,7 @@ public class TodoController {
     @GetMapping("/{id}")
     public ResponseEntity<Todo> getTodoById(@PathVariable Long id,
                                             @RequestHeader("Authorization") String token) {
-        if (jwtUtils.isTokenValid(token)&& jwtUtils.isTokenNotExpired(token)) {
+        if (jwtUtils.isTokenValid(token)) {
 
             Optional<Todo> todo = todoService.getTodoById(id);
             return todo.map(ResponseEntity::ok).orElse(ResponseEntity.notFound().build());
@@ -139,7 +157,8 @@ public class TodoController {
     public ResponseEntity<Void> updateTodo(@PathVariable long id,
                                            @RequestBody TodoRequestForService todoDto,
                                            @RequestHeader("Authorization") String token) {
-        if (jwtUtils.isTokenValid(token)&& jwtUtils.isTokenNotExpired(token)) {
+        if (jwtUtils.isTokenValid(token)) {
+
             todoService.updateTodo(id, todoDto);
             return ResponseEntity.ok().build();
         }
@@ -151,7 +170,7 @@ public class TodoController {
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteTodo(@PathVariable Long id,
                                            @RequestHeader("Authorization") String token) {
-        if (jwtUtils.isTokenValid(token)&& jwtUtils.isTokenNotExpired(token)) {
+        if (jwtUtils.isTokenValid(token)) {
 
             todoService.deleteTodo(id);
             return ResponseEntity.ok().build();

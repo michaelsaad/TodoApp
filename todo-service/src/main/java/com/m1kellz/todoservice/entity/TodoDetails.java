@@ -15,10 +15,8 @@ import java.util.Objects;
 @Getter
 @Setter
 @ToString
-@RequiredArgsConstructor
-@AllArgsConstructor
 @NoArgsConstructor
-@Builder
+@AllArgsConstructor
 @EntityListeners(AuditingEntityListener.class)
 @Table(name = "todo_details")
 public class TodoDetails {
@@ -31,11 +29,11 @@ public class TodoDetails {
     private String description;
 
     @Column(name = "priority")
-    @Enumerated
+    @Enumerated(EnumType.STRING)
     private Priority priority ;
 
     @Column(name = "status")
-    @Enumerated
+    @Enumerated(EnumType.STRING)
     private Status status;
 
     @Column(name = "created_at", updatable = false ,nullable = false)
@@ -46,9 +44,6 @@ public class TodoDetails {
     @LastModifiedDate
     private LocalDateTime lastUpdated;
 
-    // @OneToOne(mappedBy = "todo_details")
-    // @JsonIgnore
-    //private Todo todo;
 
 
     @Override
@@ -59,7 +54,7 @@ public class TodoDetails {
         Class<?> thisEffectiveClass = this instanceof HibernateProxy ? ((HibernateProxy) this).getHibernateLazyInitializer().getPersistentClass() : this.getClass();
         if (thisEffectiveClass != oEffectiveClass) return false;
         TodoDetails that = (TodoDetails) o;
-        return getId() != null && Objects.equals(getId(), that.getId());
+        return false;
     }
 
     @Override

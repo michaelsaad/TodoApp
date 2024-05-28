@@ -26,9 +26,10 @@ public class User implements UserDetails {
     @Email
     private String email;
     private String password;
-
     @Enumerated(EnumType.STRING)
     private Role role;
+    private Boolean verified;
+    private int otp ;
 
     public User(String firstName, String lastName, String email, String password, Role role) {
         this.firstName = firstName;

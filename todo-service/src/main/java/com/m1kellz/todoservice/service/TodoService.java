@@ -13,7 +13,7 @@ public interface TodoService {
     List<TodoResponse> getAllTodosWithDetailsByUserId(Long userId);
     Optional<Todo> getTodoById(Long id);
     void saveTodo(TodoRequestForService todoDto);
-    void updateTodo(long id , TodoRequestForService todoDto);
+    void updateTodo(Long id , TodoRequestForService todoDto);
     void deleteTodo(Long id);
 
 }
