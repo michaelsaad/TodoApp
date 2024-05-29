@@ -10,7 +10,7 @@ CREATE TABLE todo_details (
     id INT auto_increment PRIMARY KEY,
     description TEXT,
     created_at TIMESTAMP,
-    last_updated TIMESTAMP,
+    last_updated TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL,
     priority ENUM('REAL','CRITICAL','IMPORTANT','ROUTINE') NOT NULL,
     status ENUM('FINISHED','UNFINISHED','IN_PROGRESS') NOT NULL
 );
