@@ -1,28 +1,7 @@
 package com.m1kellz.todoservice.testcontroller;
 
-import com.m1kellz.todoservice.controller.TodoController;
-import com.m1kellz.todoservice.entity.Priority;
-import com.m1kellz.todoservice.entity.Status;
-import com.m1kellz.todoservice.entity.Todo;
-import com.m1kellz.todoservice.model.TodoRequest;
-import com.m1kellz.todoservice.service.TodoService;
-import com.m1kellz.todoservice.utils.JwtUtils;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
-import org.mockito.MockitoAnnotations;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
-
-import java.util.Arrays;
-import java.util.List;
-
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyString;
-import static org.mockito.Mockito.*;
 
 /*@SpringBootTest
 public class TodoControllerTest {

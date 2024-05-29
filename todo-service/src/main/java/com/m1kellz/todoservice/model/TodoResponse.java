@@ -8,9 +8,9 @@ import jakarta.persistence.Enumerated;
 import java.time.LocalDateTime;
 
 public record TodoResponse(
-         Long id ,
+         int id ,
          String title,
-         Long userId,
+         int userId,
          String description,
          @Enumerated(EnumType.STRING)
          Priority priority,

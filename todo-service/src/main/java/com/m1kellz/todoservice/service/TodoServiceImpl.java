@@ -50,20 +50,20 @@ public class TodoServiceImpl implements TodoService {
     }
 
     @Override
-    public List<Todo> getAllTodosByUserId(Long userId) {
+    public List<Todo> getAllTodosByUserId(int userId) {
         return todoRepository.findAllByUserId(userId);
     }
 
 
     @Override
-    public List<TodoResponse> getAllTodosWithDetailsByUserId(Long userId) {
+    public List<TodoResponse> getAllTodosWithDetailsByUserId(int userId) {
         List<Todo> todos = todoRepository.findAllByUserId(userId);
         // Return ResponseEntity with the list of TodoResponses
         return mapToTodoResponses(todos);
     }
 
     @Override
-    public Optional<Todo> getTodoById(Long id) {
+    public Optional<Todo> getTodoById(int id) {
         return todoRepository.findById(id) ;
     }
 
@@ -87,7 +87,7 @@ public class TodoServiceImpl implements TodoService {
     }
 
     @Override
-    public void updateTodo(Long id , TodoRequestForService todoDto) {
+    public void updateTodo(int id , TodoRequestForService todoDto) {
 
         Optional<Todo> todoOptional = todoRepository.findById(id);
         if (todoOptional.isPresent()) {
@@ -116,7 +116,7 @@ public class TodoServiceImpl implements TodoService {
     }
 
     @Override
-    public void deleteTodo(Long id) {
+    public void deleteTodo(int id) {
     todoRepository.deleteById(id);
     }
 

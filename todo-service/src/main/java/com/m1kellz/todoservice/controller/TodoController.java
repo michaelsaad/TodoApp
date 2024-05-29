@@ -5,7 +5,7 @@ import com.m1kellz.todoservice.model.TodoRequest;
 import com.m1kellz.todoservice.model.TodoRequestForService;
 import com.m1kellz.todoservice.model.TodoResponse;
 import com.m1kellz.todoservice.service.TodoService;
-import com.m1kellz.todoservice.utils.JwtUtils;
+import com.m1kellz.todoservice.util.JwtUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -30,7 +30,7 @@ public class TodoController {
     @PostMapping("/test")
     public ResponseEntity<Void> saveTodoTest(@RequestBody TodoRequest todoDto
                                          ) {
-        Long extractedUserId = 20L;
+        int extractedUserId = 20;
 
         TodoRequestForService todoRequestForService = new TodoRequestForService(todoDto.title(),
                 extractedUserId, todoDto.description(), todoDto.priority(), todoDto.status());
@@ -48,7 +48,7 @@ public class TodoController {
     public ResponseEntity<Void> saveTodo(@RequestBody TodoRequest todoDto,
                                          @RequestHeader("Authorization") String token) {
         if (jwtUtils.isTokenValid(token)) {
-            Long extractedUserId = jwtUtils.extractUserIdFromToken(token);
+            Integer extractedUserId = jwtUtils.extractUserIdFromToken(token);
             if (extractedUserId != null ) {
                 TodoRequestForService todoRequestForService = new TodoRequestForService(
                         todoDto.title(),
@@ -82,7 +82,7 @@ public class TodoController {
     public ResponseEntity<List<Todo>> getAllTodosForUserId(
             @RequestHeader("Authorization") String token) {
         if (jwtUtils.isTokenValid(token)) {
-            Long extractedUserId = jwtUtils.extractUserIdFromToken(token);
+            Integer extractedUserId = jwtUtils.extractUserIdFromToken(token);
             if (extractedUserId != null ) {
                 List<Todo> todos = todoService.getAllTodosByUserId(extractedUserId);
                 return ResponseEntity.ok(todos);
@@ -99,7 +99,7 @@ public class TodoController {
             @RequestHeader("Authorization") String token) {
 
         if (jwtUtils.isTokenValid(token)) {
-            Long extractedUserId = jwtUtils.extractUserIdFromToken(token);
+            Integer extractedUserId = jwtUtils.extractUserIdFromToken(token);
             if (extractedUserId != null ) {
                 List<TodoResponse> todoResponses = (todoService
                         .getAllTodosWithDetailsByUserId(extractedUserId));
@@ -114,7 +114,7 @@ public class TodoController {
     }
 
     @GetMapping("/user/{userId}")
-    public ResponseEntity<List<Todo>> getAllTodosByUserId(@PathVariable Long userId,
+    public ResponseEntity<List<Todo>> getAllTodosByUserId(@PathVariable int userId,
                                                           @RequestHeader("Authorization") String token) {
         if (jwtUtils.isTokenValid(token)) {
 
@@ -128,7 +128,7 @@ public class TodoController {
 
     @GetMapping("/user/details/{userId}/")
     public ResponseEntity<List<TodoResponse>> getAllTodosWithDetailsByUserId(
-            @PathVariable Long userId ,@RequestHeader("Authorization") String token) {
+            @PathVariable int userId ,@RequestHeader("Authorization") String token) {
         if (jwtUtils.isTokenValid(token)) {
 
             List<TodoResponse> todoResponses = (todoService
@@ -141,7 +141,7 @@ public class TodoController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<Todo> getTodoById(@PathVariable Long id,
+    public ResponseEntity<Todo> getTodoById(@PathVariable int id,
                                             @RequestHeader("Authorization") String token) {
         if (jwtUtils.isTokenValid(token)) {
 
@@ -154,7 +154,7 @@ public class TodoController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<Void> updateTodo(@PathVariable long id,
+    public ResponseEntity<Void> updateTodo(@PathVariable int id,
                                            @RequestBody TodoRequestForService todoDto,
                                            @RequestHeader("Authorization") String token) {
         if (jwtUtils.isTokenValid(token)) {
@@ -168,7 +168,7 @@ public class TodoController {
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteTodo(@PathVariable Long id,
+    public ResponseEntity<Void> deleteTodo(@PathVariable int id,
                                            @RequestHeader("Authorization") String token) {
         if (jwtUtils.isTokenValid(token)) {
 

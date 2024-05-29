@@ -11,7 +11,7 @@ import jakarta.persistence.Enumerated;
 public record TodoRequestForService(
         @Schema(description = "Todo Title")
         String title,
-        Long userId ,
+        int userId ,
         String description,
         @Schema(description = " pls insert one of these values: 'REAL' 'CRITICAL' 'IMPORTANT' 'ROUTINE' ")
         @Enumerated(EnumType.STRING)

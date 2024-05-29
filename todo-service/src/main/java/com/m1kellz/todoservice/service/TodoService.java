@@ -9,11 +9,11 @@ import java.util.Optional;
 
 public interface TodoService {
     List<Todo> getAllTodos();
-    List<Todo> getAllTodosByUserId(Long userId);
-    List<TodoResponse> getAllTodosWithDetailsByUserId(Long userId);
-    Optional<Todo> getTodoById(Long id);
+    List<Todo> getAllTodosByUserId(int userId);
+    List<TodoResponse> getAllTodosWithDetailsByUserId(int userId);
+    Optional<Todo> getTodoById(int id);
     void saveTodo(TodoRequestForService todoDto);
-    void updateTodo(Long id , TodoRequestForService todoDto);
-    void deleteTodo(Long id);
+    void updateTodo(int id , TodoRequestForService todoDto);
+    void deleteTodo(int id);
 
 }

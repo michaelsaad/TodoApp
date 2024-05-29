@@ -22,7 +22,7 @@ import java.util.Objects;
 public class TodoDetails {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    private Integer id;
 
 
     @Column(name = "description")

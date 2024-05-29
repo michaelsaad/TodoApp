@@ -6,6 +6,7 @@ import com.m1kellz.userservice.model.request.LoginRequest;
 import com.m1kellz.userservice.model.request.RegisterRequest;
 import com.m1kellz.userservice.service.AuthService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
@@ -13,7 +14,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.Map;
 
 @Controller
-@RequestMapping("/rest/auth")
+@RequestMapping("api/v1/auth")
 public class AuthController {
 
     @Autowired
@@ -31,16 +32,14 @@ public class AuthController {
         return ResponseEntity.ok(authService.register(registerRequest));
     }
 
-
-    @GetMapping("activate/{email}")
-    public ResponseEntity<Void> updateTodo(@PathVariable String email,
-                                           @RequestHeader("OTP") String otp) {
-
-
-
-            return ResponseEntity.ok().build();
-
-
+    @PutMapping("activate/{email}")
+    public ResponseEntity<String> verifyAccount(@PathVariable String email,
+                                                @RequestHeader("OTP") String otp) {
+        return new ResponseEntity<>(authService.verifyAccount(email, otp), HttpStatus.OK);
+    }
+    @PutMapping("/regenerate-otp")
+    public ResponseEntity<String> regenerateOtp(@RequestParam String email) {
+        return new ResponseEntity<>(authService.regenerateOtp(email), HttpStatus.OK);
     }
 
 }

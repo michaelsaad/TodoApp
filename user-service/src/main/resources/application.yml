@@ -2,7 +2,7 @@ spring:
   application:
     name: user-service
   datasource:
-    url: jdbc:mysql://localhost:3306/todo
+    url: jdbc:mysql://localhost:3306/user_db
     username: mickey
     password: letmein
     driver-class-name: com.mysql.cj.jdbc.Driver
@@ -15,3 +15,12 @@ spring:
         format_sql: true
     database: mysql
     database-platform: org.hibernate.dialect.mySQLDialect
+  mail:
+    host: smtp.gmail.com
+    port: 587
+    username: ur_email
+    password: ur_generated_password
+
+
+server:
+  port: 8083

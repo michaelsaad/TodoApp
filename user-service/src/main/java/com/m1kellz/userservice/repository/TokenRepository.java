@@ -3,7 +3,7 @@ package com.m1kellz.userservice.repository;
 import com.m1kellz.userservice.entity.Token;
 import org.springframework.data.jpa.repository.JpaRepository;
 
-public interface TokenRepository extends JpaRepository<Token, Long> {
+public interface TokenRepository extends JpaRepository<Token, Integer> {
 
   Token findByToken(String token);
 }

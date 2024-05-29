@@ -1,4 +1,4 @@
-package com.m1kellz.todoservice.utils;
+package com.m1kellz.todoservice.util;
 
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
@@ -13,7 +13,7 @@ import org.springframework.web.client.RestTemplate;
 @Component
 public class JwtUtils {
     private final String secretKey = "BigProblemMickey";
-    private final String authServiceUrl = "http://your-auth-service-url";
+    private final String authServiceUrl = "http://localhost:8083/api/v1/auth";
 
     @Autowired
     private RestTemplate restTemplate;
@@ -35,10 +35,10 @@ public class JwtUtils {
 
 
 
-    public Long extractUserIdFromToken(String token) {
+    public Integer extractUserIdFromToken(String token) {
         try {
             Claims claims = Jwts.parser().setSigningKey(secretKey).parseClaimsJws(token).getBody();
-            return Long.parseLong(claims.get("id").toString());
+            return Integer.parseInt(claims.get("id").toString());
         } catch (Exception e) {
             return null;
         }
