@@ -40,9 +40,15 @@ public class AuthController {
                                                 @RequestHeader("OTP") String otp) {
         return new ResponseEntity<>(authService.verifyAccount(email, otp), HttpStatus.OK);
     }
-    @PutMapping("/regenerate-otp")
-    public ResponseEntity<String> regenerateOtp(@RequestParam String email) {
+    @PutMapping("/regenerate-otp/{email}")
+    public ResponseEntity<String> regenerateOtp(@PathVariable String email) {
         return new ResponseEntity<>(authService.regenerateOtp(email), HttpStatus.OK);
+    }@PutMapping("/forgot-password/{email}")
+    public ResponseEntity<String> forgotPassword(@PathVariable String email) {
+        return new ResponseEntity<>(authService.regenerateOtp(email), HttpStatus.OK);
+    }@PutMapping("/reset-password/{email}")
+    public ResponseEntity<String> resetPassword(@PathVariable String email,@RequestHeader("password") String password) {
+        return new ResponseEntity<>(authService.setPassword(email ,password), HttpStatus.OK);
     }
     @GetMapping("/validate-token")
     public ResponseEntity<Boolean> checkToken(@RequestHeader("Authorization") String token) {

@@ -23,4 +23,18 @@ private JavaMailSender javaMailSender;
 
         javaMailSender.send(mimeMessage);
     }
+
+    public void sendSetPassword(String email) throws MessagingException {
+        MimeMessage mimeMessage = javaMailSender.createMimeMessage();
+        MimeMessageHelper mimeMessageHelper = new MimeMessageHelper(mimeMessage);
+        mimeMessageHelper.setTo(email);
+        mimeMessageHelper.setSubject("Reset Password");
+        mimeMessageHelper.setText("""
+        <div>
+          <a href="http://localhost:8083//reset-password/=%s" target="_blank">click link to verify</a>
+        </div>
+        """.formatted(email) ,true);
+
+        javaMailSender.send(mimeMessage);
+    }
 }

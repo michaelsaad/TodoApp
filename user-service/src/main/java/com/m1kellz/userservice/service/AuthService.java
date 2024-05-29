@@ -117,4 +117,25 @@ public class AuthService
                 .build();
         tokenRepository.save(token);
     }
+
+    public String forgotPassword(String email) {
+        User user = userRepository.findUserByEmail((email)).
+                orElseThrow(() -> new RuntimeException("User not found with this email: " + email));
+        try {
+            emailUtil.sendSetPassword(email);
+
+        }catch (MessagingException e){
+            throw new RuntimeException("unable to send reset password mail ");
+        }
+        return "please check your mail";
+    }
+
+    public String setPassword(String email, String password) {
+        User user = userRepository.findUserByEmail((email)).
+                orElseThrow(() -> new RuntimeException("User not found with this email: " + email));
+        user.setPassword(passwordEncoder.encode(password));
+        userRepository.save(user);
+        return "your password changed !";
+
+    }
 }
