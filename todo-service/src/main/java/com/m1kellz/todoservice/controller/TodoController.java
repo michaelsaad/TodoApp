@@ -129,6 +129,7 @@ public class TodoController {
     @GetMapping("/user/details/{userId}/")
     public ResponseEntity<List<TodoResponse>> getAllTodosWithDetailsByUserId(
             @PathVariable int userId ,@RequestHeader("Authorization") String token) {
+
         if (jwtUtils.isTokenValid(token)) {
 
             List<TodoResponse> todoResponses = (todoService

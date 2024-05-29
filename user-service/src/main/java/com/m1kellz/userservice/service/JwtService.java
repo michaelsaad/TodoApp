@@ -38,7 +38,7 @@ public class JwtService {
                 .compact();
     }
 
-    private Claims parseJwtClaims(String token)
+    public Claims parseJwtClaims(String token)
     {
         return jwtParser.parseClaimsJws(token).getBody();
     }
@@ -70,6 +70,7 @@ public class JwtService {
     }
 
 
+
     public boolean isTokenExpired(Date expirationDate) throws AuthenticationException
     {
         try {
@@ -92,5 +93,6 @@ public class JwtService {
     private List<String> getRoles(Claims claims) {
         return (List<String>) claims.get("roles");
     }
+
 
 }

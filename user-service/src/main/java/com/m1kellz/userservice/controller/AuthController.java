@@ -1,6 +1,7 @@
 package com.m1kellz.userservice.controller;
 
 
+import com.m1kellz.userservice.auth.CheckToken;
 import com.m1kellz.userservice.model.request.AuthenticationResponse;
 import com.m1kellz.userservice.model.request.LoginRequest;
 import com.m1kellz.userservice.model.request.RegisterRequest;
@@ -19,6 +20,8 @@ public class AuthController {
 
     @Autowired
     private AuthService authService;
+    @Autowired
+    private CheckToken checkToken;
 
 
     @PostMapping(value = "/login")
@@ -40,6 +43,13 @@ public class AuthController {
     @PutMapping("/regenerate-otp")
     public ResponseEntity<String> regenerateOtp(@RequestParam String email) {
         return new ResponseEntity<>(authService.regenerateOtp(email), HttpStatus.OK);
+    }
+    @GetMapping("/validate-token")
+    public ResponseEntity<Boolean> checkToken(@RequestHeader("Authorization") String token) {
+        boolean result = checkToken.goodToken(token);
+
+        return ResponseEntity.ok(result);
+
     }
 
 }

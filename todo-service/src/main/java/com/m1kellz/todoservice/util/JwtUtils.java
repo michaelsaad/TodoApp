@@ -37,7 +37,8 @@ public class JwtUtils {
 
     public Integer extractUserIdFromToken(String token) {
         try {
-            Claims claims = Jwts.parser().setSigningKey(secretKey).parseClaimsJws(token).getBody();
+            String accessToken = token.substring("Bearer ".length());
+            Claims claims = Jwts.parser().setSigningKey(secretKey).parseClaimsJws(accessToken).getBody();
             return Integer.parseInt(claims.get("id").toString());
         } catch (Exception e) {
             return null;
