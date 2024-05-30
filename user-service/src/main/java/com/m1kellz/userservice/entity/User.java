@@ -2,6 +2,8 @@ package com.m1kellz.userservice.entity;
 
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Email;
+import jakarta.validation.constraints.NotEmpty;
+import jakarta.validation.constraints.NotNull;
 import lombok.*;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -22,15 +24,25 @@ public class User implements UserDetails {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
+    @Column(name = "first_name")
     private String firstName;
+    @Column(name = "last_name")
     private String lastName;
     @Email
+    @NotEmpty
+    @Column(name = "email")
     private String email;
+    @NotNull
+    @Column(name = "password")
     private String password;
+    @Column(name = "role")
     @Enumerated(EnumType.STRING)
     private Role role;
+    @Column(name = "verified")
     private Boolean verified;
+    @Column(name = "otp")
     private String otp;
+    @Column(name = "otpGeneratedTime")
     private LocalDateTime otpGeneratedTime;
 
       @Override

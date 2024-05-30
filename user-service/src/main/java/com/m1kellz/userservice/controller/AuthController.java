@@ -9,12 +9,11 @@ import com.m1kellz.userservice.service.AuthService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Map;
 
-@Controller
+@RestController
 @RequestMapping("api/v1/auth")
 public class AuthController {
 

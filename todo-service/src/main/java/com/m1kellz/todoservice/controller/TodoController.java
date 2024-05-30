@@ -38,10 +38,19 @@ public class TodoController {
                 todoService.saveTodo(todoRequestForService);
                 return ResponseEntity.ok().build();
             }
-
     @GetMapping("/test")
     public ResponseEntity<List<Todo>> getAllTodosTest() {
-        List<Todo> todos = todoService.getAllTodos();
+
+
+            List<Todo> todos = todoService.getAllTodos();
+            return ResponseEntity.ok(todos);
+
+
+    }
+
+    @GetMapping("/test/{userId}")
+    public ResponseEntity<List<TodoResponse>> getAllTodosByUserIdTest(@PathVariable int userId) {
+        List<TodoResponse> todos = todoService.getAllTodosWithDetailsByUserId(userId);
         return ResponseEntity.ok(todos);
     }
 
