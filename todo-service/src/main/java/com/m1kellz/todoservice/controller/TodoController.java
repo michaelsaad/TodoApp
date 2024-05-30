@@ -44,6 +44,15 @@ public class TodoController {
         List<Todo> todos = todoService.getAllTodos();
         return ResponseEntity.ok(todos);
     }
+
+    @PutMapping("/test/{id}")
+    public ResponseEntity<Void> updateTodoTest(@PathVariable int id,
+                                           @RequestBody TodoRequest todoDto) {
+
+            todoService.updateTodo(id, todoDto);
+            return ResponseEntity.ok().build();
+
+    }
     @PostMapping
     public ResponseEntity<Void> saveTodo(@RequestBody TodoRequest todoDto,
                                          @RequestHeader("Authorization") String token) {
@@ -156,7 +165,7 @@ public class TodoController {
 
     @PutMapping("/{id}")
     public ResponseEntity<Void> updateTodo(@PathVariable int id,
-                                           @RequestBody TodoRequestForService todoDto,
+                                           @RequestBody TodoRequest todoDto,
                                            @RequestHeader("Authorization") String token) {
         if (jwtUtils.isTokenValid(token)) {
 

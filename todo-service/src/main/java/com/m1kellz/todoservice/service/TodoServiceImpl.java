@@ -2,6 +2,7 @@ package com.m1kellz.todoservice.service;
 
 import com.m1kellz.todoservice.entity.Todo;
 import com.m1kellz.todoservice.entity.TodoDetails;
+import com.m1kellz.todoservice.model.TodoRequest;
 import com.m1kellz.todoservice.model.TodoRequestForService;
 import com.m1kellz.todoservice.model.TodoResponse;
 import com.m1kellz.todoservice.repository.TodoDetailsRepository;
@@ -87,7 +88,7 @@ public class TodoServiceImpl implements TodoService {
     }
 
     @Override
-    public void updateTodo(int id , TodoRequestForService todoDto) {
+    public void updateTodo(int id , TodoRequest todoDto) {
 
         Optional<Todo> todoOptional = todoRepository.findById(id);
         if (todoOptional.isPresent()) {
@@ -104,7 +105,7 @@ public class TodoServiceImpl implements TodoService {
                 Todo updatedTodo = new Todo();
                 updatedTodo.setId(todo.getId());
                 updatedTodo.setTitle(todoDto.title());
-                updatedTodo.setUserId(todoDto.userId());
+                updatedTodo.setUserId(todo.getUserId());
 
                 // Associate Todo with TodoDetails
                 updatedTodo.setTodoDetails(todoDetails);
