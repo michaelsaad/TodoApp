@@ -53,8 +53,11 @@ public class AuthController {
     @GetMapping("/validate-token")
     public ResponseEntity<Boolean> checkToken(@RequestHeader("Authorization") String token) {
         boolean result = checkToken.goodToken(token);
-
-        return ResponseEntity.ok(result);
+        if (result) {
+            return ResponseEntity.ok(true);
+        } else {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+        }
 
     }
 
