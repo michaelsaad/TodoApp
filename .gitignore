@@ -1,0 +1,9 @@
+# Local secrets (copy from .env.example)
+.env
+
+# JVM crash and diagnostic logs
+hs_err_pid*.log
+replay_pid*.log
+
+# IDE
+.idea/
