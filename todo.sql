@@ -1,39 +1,44 @@
-use todo;
-CREATE TABLE todo_details (
-                              id INT auto_increment PRIMARY KEY,
-                              description TEXT,
-                              created_at TIMESTAMP,
-                              last_updated TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL,
-                              priority ENUM('REAL','CRITICAL','IMPORTANT','ROUTINE') NOT NULL,
-                              status ENUM('FINISHED','UNFINISHED','IN_PROGRESS') NOT NULL
-);
-CREATE TABLE todo (
-                      id INT  auto_increment PRIMARY KEY,
-                      title VARCHAR(255),
-                      user_id INT,
-                      todo_details_id INT,
-                      FOREIGN KEY (todo_details_ID) REFERENCES todo_details(id)
+CREATE DATABASE IF NOT EXISTS user_db;
+USE user_db;
+
+CREATE TABLE IF NOT EXISTS user (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    first_name VARCHAR(50) NOT NULL,
+    last_name VARCHAR(50) NOT NULL,
+    email VARCHAR(100) NOT NULL UNIQUE,
+    password VARCHAR(200) NOT NULL,
+    role ENUM('USER','ADMIN','MANAGER') NOT NULL,
+    verified BOOLEAN DEFAULT FALSE,
+    otp VARCHAR(10) NOT NULL,
+    otpGeneratedTime TIMESTAMP NOT NULL
 );
 
-use user_db ;
-CREATE TABLE user (
-                      id INT auto_increment PRIMARY KEY,
-                      first_name VARCHAR(50)NOT NULL,
-                      last_name VARCHAR(50)NOT NULL,
-                      email VARCHAR(100)  NOT NULL UNIQUE,
-                      password VARCHAR(200)NOT NULL,
-                      role ENUM('USER','ADMIN','MANGER') NOT NULL,
-                      verified BOOLEAN DEFAULT false,
-                      otp INT NOT NULL ,
-                      otpGeneratedTime TIMESTAMP NOT NULL
-
+CREATE TABLE IF NOT EXISTS JWT (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    token VARCHAR(512) NOT NULL,
+    revoked BOOLEAN DEFAULT FALSE,
+    expired BOOLEAN DEFAULT FALSE,
+    token_type ENUM('BEARER') NOT NULL,
+    user_id INT NOT NULL,
+    FOREIGN KEY (user_id) REFERENCES user(id)
 );
-CREATE TABLE  JWT (
-                      id INT auto_increment  PRIMARY KEY ,
-                      token VARCHAR(50)NOT NULL,
-                      revoked BOOLEAN DEFAULT false,
-                      expired BOOLEAN DEFAULT false,
-                      token_type ENUM('BEARER') NOT NULL ,
-                      user_id INT  NOT NULL,
-                      FOREIGN KEY (user_id) REFERENCES user(id)
+
+CREATE DATABASE IF NOT EXISTS todo;
+USE todo;
+
+CREATE TABLE IF NOT EXISTS todo_details (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    description TEXT,
+    created_at TIMESTAMP,
+    last_updated TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL,
+    priority ENUM('REAL','CRITICAL','IMPORTANT','ROUTINE') NOT NULL,
+    status ENUM('FINISHED','UNFINISHED','IN_PROGRESS') NOT NULL
+);
+
+CREATE TABLE IF NOT EXISTS todo (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    title VARCHAR(255),
+    user_id INT,
+    todo_details_id INT,
+    FOREIGN KEY (todo_details_id) REFERENCES todo_details(id)
 );
