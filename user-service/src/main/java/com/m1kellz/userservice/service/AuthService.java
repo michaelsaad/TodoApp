@@ -1,5 +1,6 @@
 package com.m1kellz.userservice.service;
 
+import com.m1kellz.userservice.entity.Role;
 import com.m1kellz.userservice.entity.TokenType;
 import com.m1kellz.userservice.entity.Token;
 import com.m1kellz.userservice.entity.User;
@@ -8,6 +9,7 @@ import com.m1kellz.userservice.model.request.LoginRequest;
 import com.m1kellz.userservice.model.request.RegisterRequest;
 import com.m1kellz.userservice.repository.TokenRepository;
 import com.m1kellz.userservice.repository.UserRepository;
+import com.m1kellz.userservice.messaging.EmailProducer;
 import com.m1kellz.userservice.util.EmailUtil;
 import com.m1kellz.userservice.util.OtpUtil;
 import jakarta.mail.MessagingException;
@@ -27,6 +29,8 @@ public class AuthService
 {
     @Autowired
     private OtpUtil otpUtil;
+    @Autowired(required = false)
+    private EmailProducer emailProducer;
     @Autowired
     private EmailUtil emailUtil;
     @Autowired
@@ -48,36 +52,35 @@ public class AuthService
     {
         authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(request.getEmail(),request.getPassword()));
         User user = userRepository.findUserByEmail(request.getEmail()).orElseThrow(() -> new RuntimeException("User not found with this email: " + request.getEmail()));
-        Map<String , Object> extraClaims = new HashMap<>();
-        String jwtToken = jwtService.createToken(user , extraClaims);
-        saveUserToken(user, jwtToken);
-        if (!user.getVerified()) {
+        if (!Boolean.TRUE.equals(user.getVerified())) {
             throw new RuntimeException("Account is not verified");
         }
+        Map<String , Object> extraClaims = new HashMap<>();
+        extraClaims.put("id", user.getId());
+        String jwtToken = jwtService.createToken(user , extraClaims);
+        saveUserToken(user, jwtToken);
         return new AuthenticationResponse(jwtToken , request.getEmail());
     }
 
     public AuthenticationResponse register(RegisterRequest request)
     {
         String otp = otpUtil.generateOtp();
-        try {
-            emailUtil.sendOtpEmail(request.getEmail(), otp);
-        } catch (MessagingException e) {
-            throw new RuntimeException("Unable to send otp please try again");
-        }
+        sendOtp(request.getEmail(), otp);
         User user = User.builder()
                 .firstName(request.getFirstname())
                 .lastName(request.getLastname())
                 .email(request.getEmail())
                 .password(passwordEncoder.encode(request.getPassword()))
-                .role(request.getRole())
+                .role(request.getRole() != null ? request.getRole() : Role.USER)
+                .verified(false)
                 .otp(otp)
                 .otpGeneratedTime(LocalDateTime.now())
                 .build();
 
         User savedUser = userRepository.save(user);
         Map<String , Object> extraClaims = new HashMap<>();
-        String jwtToken = jwtService.createToken(user , extraClaims);
+        extraClaims.put("id", savedUser.getId());
+        String jwtToken = jwtService.createToken(savedUser , extraClaims);
         saveUserToken(savedUser, jwtToken);
         return new AuthenticationResponse(jwtToken , request.getEmail());
     }
@@ -96,15 +99,23 @@ public class AuthService
     public String regenerateOtp(String email) {
         User user = userRepository.findUserByEmail((email)).orElseThrow(() -> new RuntimeException("User not found with this email: " + email));
         String otp = otpUtil.generateOtp();
+        sendOtp(email, otp);
+        user.setOtp(otp);
+        user.setOtpGeneratedTime(LocalDateTime.now());
+        userRepository.save(user);
+        return "Email sent... please verify account within 1 minute";
+    }
+
+    private void sendOtp(String email, String otp) {
+        if (emailProducer != null) {
+            emailProducer.sendOtpEmail(email, otp);
+            return;
+        }
         try {
             emailUtil.sendOtpEmail(email, otp);
         } catch (MessagingException e) {
             throw new RuntimeException("Unable to send otp please try again");
         }
-        user.setOtp(otp);
-        user.setOtpGeneratedTime(LocalDateTime.now());
-        userRepository.save(user);
-        return "Email sent... please verify account within 1 minute";
     }
 
     private void saveUserToken(User user, String jwtToken) {

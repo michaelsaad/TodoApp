@@ -54,7 +54,7 @@ public class TodoDetails {
         Class<?> thisEffectiveClass = this instanceof HibernateProxy ? ((HibernateProxy) this).getHibernateLazyInitializer().getPersistentClass() : this.getClass();
         if (thisEffectiveClass != oEffectiveClass) return false;
         TodoDetails that = (TodoDetails) o;
-        return false;
+        return getId() != null && getId().equals(that.getId());
     }
 
     @Override

@@ -3,6 +3,7 @@ package com.m1kellz.userservice.service;
 import com.m1kellz.userservice.entity.User;
 import io.jsonwebtoken.*;
 import jakarta.servlet.http.HttpServletRequest;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
@@ -14,16 +15,13 @@ import java.util.Map;
 @Service
 public class JwtService {
 
-
-    private final String secret_key = "BigProblemMickey";
-
-    private final long accessTokenValidity = 30*60*1000;  //valid till 30 minutes
-
+    private final String secretKey;
+    private final long accessTokenValidity = 30 * 60 * 1000;
     private final JwtParser jwtParser;
 
-    public JwtService()
-    {
-        this.jwtParser = Jwts.parser().setSigningKey(secret_key);
+    public JwtService(@Value("${app.jwt.secret}") String secretKey) {
+        this.secretKey = secretKey;
+        this.jwtParser = Jwts.parser().setSigningKey(secretKey);
     }
 
     public String createToken(User user , Map<String , Object> extraClaims) {
@@ -34,7 +32,7 @@ public class JwtService {
                 .setSubject(user.getEmail())
                 .setExpiration(new Date(System.currentTimeMillis() + accessTokenValidity))
                 .setIssuedAt(new Date(System.currentTimeMillis()))
-                .signWith(SignatureAlgorithm.HS256, secret_key)
+                .signWith(SignatureAlgorithm.HS256, secretKey)
                 .compact();
     }
 

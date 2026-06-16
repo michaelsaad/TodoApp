@@ -9,10 +9,10 @@ import com.m1kellz.todoservice.service.TodoService;
 import com.m1kellz.todoservice.util.JwtUtils;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.MockitoAnnotations;
-import org.springframework.boot.test.context.SpringBootTest;
+import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
@@ -24,7 +24,7 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.*;
 
-@SpringBootTest
+@ExtendWith(MockitoExtension.class)
 public class TodoControllerTest {
     @InjectMocks
     private TodoController todoController;
@@ -37,41 +37,32 @@ public class TodoControllerTest {
 
     @BeforeEach
     void setUp() {
-        MockitoAnnotations.openMocks(this);
+        todoController = new TodoController(todoService, jwtUtils);
     }
 
     @Test
     void saveTodo_ValidToken_ReturnsOk() {
-        // Mock token validation
         when(jwtUtils.isTokenValid(anyString())).thenReturn(true);
-
-        // Mock extracted user ID
         when(jwtUtils.extractUserIdFromToken(anyString())).thenReturn(1);
-
-        // Mock service call
         doNothing().when(todoService).saveTodo(any());
 
-        // Call the controller method
-        ResponseEntity<Void> response = todoController.saveTodo(new TodoRequest("finish the task","complete user service", Priority.CRITICAL, Status.IN_PROGRESS), "valid-token");
+        ResponseEntity<Void> response = todoController.saveTodo(
+                new TodoRequest("finish the task", "complete user service", Priority.CRITICAL, Status.IN_PROGRESS),
+                "valid-token");
 
-        // Verify
         verify(todoService).saveTodo(any());
         assertEquals(HttpStatus.OK, response.getStatusCode());
     }
 
     @Test
     void getAllTodos_ValidToken_ReturnsTodos() {
-        // Mock token validation
         when(jwtUtils.isTokenValid(anyString())).thenReturn(true);
 
-        // Mock service call
         List<Todo> mockTodos = Arrays.asList(new Todo(), new Todo());
         when(todoService.getAllTodos()).thenReturn(mockTodos);
 
-        // Call the controller method
         ResponseEntity<List<Todo>> response = todoController.getAllTodos("valid-token");
 
-        // Verify
         verify(todoService).getAllTodos();
         assertEquals(HttpStatus.OK, response.getStatusCode());
         assertEquals(mockTodos, response.getBody());
@@ -79,18 +70,13 @@ public class TodoControllerTest {
 
     @Test
     void saveTodo_InvalidToken_ReturnsUnauthorized() {
-        // Mock token validation
         when(jwtUtils.isTokenValid(anyString())).thenReturn(false);
 
-        // Call the controller method
         ResponseEntity<Void> response = todoController.saveTodo(
-                new TodoRequest("finish the task","complete user service", Priority.CRITICAL, Status.IN_PROGRESS), "invalid-token");
+                new TodoRequest("finish the task", "complete user service", Priority.CRITICAL, Status.IN_PROGRESS),
+                "invalid-token");
 
-        // Verify
         verify(todoService, never()).saveTodo(any());
         assertEquals(HttpStatus.UNAUTHORIZED, response.getStatusCode());
     }
-
-
 }
-

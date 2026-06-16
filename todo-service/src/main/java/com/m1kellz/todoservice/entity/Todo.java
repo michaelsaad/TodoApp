@@ -30,7 +30,7 @@ public class Todo {
     @Column(name = "user_id")
     private Integer userId;
 
-    @OneToOne(cascade = CascadeType.ALL)
+    @OneToOne(cascade = CascadeType.ALL, orphanRemoval = true)
     @JoinColumn(name = "todo_details_id")
     private TodoDetails todoDetails ;
 

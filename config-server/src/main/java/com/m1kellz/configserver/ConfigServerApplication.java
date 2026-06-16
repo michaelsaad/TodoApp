@@ -1,9 +1,11 @@
 package com.m1kellz.configserver;
 
+import org.springframework.cloud.config.server.EnableConfigServer;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 @SpringBootApplication
+@EnableConfigServer
 public class ConfigServerApplication {
 
 	public static void main(String[] args) {

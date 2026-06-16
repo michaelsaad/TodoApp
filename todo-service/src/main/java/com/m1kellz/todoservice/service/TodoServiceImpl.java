@@ -2,11 +2,15 @@ package com.m1kellz.todoservice.service;
 
 import com.m1kellz.todoservice.entity.Todo;
 import com.m1kellz.todoservice.entity.TodoDetails;
+import com.m1kellz.todoservice.messaging.TodoCreatedEvent;
+import com.m1kellz.todoservice.messaging.TodoEventProducer;
 import com.m1kellz.todoservice.model.TodoRequest;
 import com.m1kellz.todoservice.model.TodoRequestForService;
 import com.m1kellz.todoservice.model.TodoResponse;
 import com.m1kellz.todoservice.repository.TodoDetailsRepository;
 import com.m1kellz.todoservice.repository.TodoRepository;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -19,10 +23,15 @@ public class TodoServiceImpl implements TodoService {
 
     private final TodoRepository todoRepository;
     private final TodoDetailsRepository todoDetailsRepository;
+    private final TodoEventProducer todoEventProducer;
 
-    public TodoServiceImpl(TodoRepository todoRepository, TodoDetailsRepository todoDetailsRepository) {
+    public TodoServiceImpl(TodoRepository todoRepository,
+                           TodoDetailsRepository todoDetailsRepository,
+                           @org.springframework.beans.factory.annotation.Autowired(required = false)
+                           TodoEventProducer todoEventProducer) {
         this.todoRepository = todoRepository;
         this.todoDetailsRepository = todoDetailsRepository;
+        this.todoEventProducer = todoEventProducer;
     }
 
     public TodoResponse mapToTodoResponse(Todo todo) {
@@ -51,24 +60,25 @@ public class TodoServiceImpl implements TodoService {
     }
 
     @Override
+    @Cacheable(value = "userTodos", key = "#userId")
     public List<Todo> getAllTodosByUserId(int userId) {
         return todoRepository.findAllByUserId(userId);
     }
 
-
     @Override
+    @Cacheable(value = "userTodoDetails", key = "#userId")
     public List<TodoResponse> getAllTodosWithDetailsByUserId(int userId) {
         List<Todo> todos = todoRepository.findAllByUserId(userId);
-        // Return ResponseEntity with the list of TodoResponses
         return mapToTodoResponses(todos);
     }
 
     @Override
     public Optional<Todo> getTodoById(int id) {
-        return todoRepository.findById(id) ;
+        return todoRepository.findById(id);
     }
 
     @Override
+    @CacheEvict(value = {"userTodos", "userTodoDetails"}, allEntries = true)
     public void saveTodo(TodoRequestForService todoDto) {
         Todo todo = new Todo();
         todo.setTitle(todoDto.title());
@@ -79,47 +89,38 @@ public class TodoServiceImpl implements TodoService {
         todoDetails.setPriority(todoDto.priority());
         todoDetails.setStatus(todoDto.status());
 
-        // Associate Todo with TodoDetails
         todo.setTodoDetails(todoDetails);
-
-        todoDetailsRepository.save(todoDetails);
-        todoRepository.save(todo);
-
+        Todo savedTodo = todoRepository.save(todo);
+        if (todoEventProducer != null) {
+            todoEventProducer.publishTodoCreated(
+                    new TodoCreatedEvent(savedTodo.getId(), savedTodo.getUserId(), savedTodo.getTitle()));
+        }
     }
 
     @Override
-    public void updateTodo(int id , TodoRequest todoDto) {
-
+    @CacheEvict(value = {"userTodos", "userTodoDetails"}, allEntries = true)
+    public void updateTodo(int id, TodoRequest todoDto) {
         Optional<Todo> todoOptional = todoRepository.findById(id);
-        if (todoOptional.isPresent()) {
-            Todo todo = todoOptional.get();
-            Optional<TodoDetails> todoDetailsOptional = todoDetailsRepository.findById(todo.getTodoDetails().getId());
-
-            if (todoDetailsOptional.isPresent()) {
-                TodoDetails todoDetails = todoDetailsOptional.get();
-                todoDetails.setDescription(todoDto.description());
-                todoDetails.setPriority(todoDto.priority());
-                todoDetails.setStatus(todoDto.status());
-
-                // Create a new Todo instance with updated values
-                Todo updatedTodo = new Todo();
-                updatedTodo.setId(todo.getId());
-                updatedTodo.setTitle(todoDto.title());
-                updatedTodo.setUserId(todo.getUserId());
-
-                // Associate Todo with TodoDetails
-                updatedTodo.setTodoDetails(todoDetails);
-                todoDetailsRepository.save(todoDetails);
-                todoRepository.save(updatedTodo);
-            }
+        if (todoOptional.isEmpty()) {
+            return;
         }
 
+        Todo todo = todoOptional.get();
+        todo.setTitle(todoDto.title());
+
+        TodoDetails todoDetails = todo.getTodoDetails();
+        if (todoDetails != null) {
+            todoDetails.setDescription(todoDto.description());
+            todoDetails.setPriority(todoDto.priority());
+            todoDetails.setStatus(todoDto.status());
+        }
+
+        todoRepository.save(todo);
     }
 
     @Override
+    @CacheEvict(value = {"userTodos", "userTodoDetails"}, allEntries = true)
     public void deleteTodo(int id) {
-    todoRepository.deleteById(id);
+        todoRepository.deleteById(id);
     }
-
-
 }
